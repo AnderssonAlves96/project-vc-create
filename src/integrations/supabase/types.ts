@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      veiculos: {
+        Row: {
+          created_at: string
+          id: string
+          manutencao_prevista: string
+          manutencao_realizada: string
+          observacoes: string
+          placa: string
+          proxima_manutencao: string
+          responsavel: string
+          tipo: string
+          tipo_manutencao: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          manutencao_prevista?: string
+          manutencao_realizada?: string
+          observacoes?: string
+          placa: string
+          proxima_manutencao?: string
+          responsavel?: string
+          tipo?: string
+          tipo_manutencao?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          manutencao_prevista?: string
+          manutencao_realizada?: string
+          observacoes?: string
+          placa?: string
+          proxima_manutencao?: string
+          responsavel?: string
+          tipo?: string
+          tipo_manutencao?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
