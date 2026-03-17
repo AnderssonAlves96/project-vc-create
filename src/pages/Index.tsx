@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FileUp, Printer, Upload, CheckCircle } from "lucide-react";
+import { Search, FileUp, Printer, Upload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -18,7 +18,7 @@ const Index = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { vehicles, setVehicles } = useVehicles();
+  const { vehicles, loading, refreshVehicles } = useVehicles();
 
   const baseUrl = window.location.origin;
 
@@ -44,11 +44,11 @@ const Index = () => {
 
     setUploading(true);
     try {
-      const parsed = await parseVehicleExcel(file);
-      setVehicles(parsed);
+      await parseVehicleExcel(file);
+      await refreshVehicles();
       toast({
         title: "Planilha atualizada!",
-        description: `${parsed.length} veículos carregados com sucesso.`,
+        description: "Veículos salvos no banco de dados com sucesso.",
       });
     } catch (err) {
       toast({
@@ -117,20 +117,24 @@ const Index = () => {
         </div>
 
         {/* Vehicle Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((vehicle) => (
-            <VehicleCard
-              key={vehicle.id}
-              vehicle={vehicle}
-              onClick={handleCardClick}
-              baseUrl={baseUrl}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-16 text-muted-foreground">Carregando veículos...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filtered.map((vehicle) => (
+              <VehicleCard
+                key={vehicle.id}
+                vehicle={vehicle}
+                onClick={handleCardClick}
+                baseUrl={baseUrl}
+              />
+            ))}
+          </div>
+        )}
 
-        {filtered.length === 0 && (
+        {!loading && filtered.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">
-            Nenhum veículo encontrado.
+            Nenhum veículo encontrado. Faça upload de uma planilha para começar.
           </div>
         )}
       </div>
