@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, FileUp, Printer } from "lucide-react";
+import { Search, FileUp, Printer, Upload, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 import VehicleCard from "@/components/VehicleCard";
 import VehicleDetailModal from "@/components/VehicleDetailModal";
-import { vehicles, type Vehicle } from "@/data/vehicles";
+import { useVehicles } from "@/context/VehicleContext";
+import { parseVehicleExcel } from "@/lib/parseExcel";
+import type { Vehicle } from "@/data/vehicles";
 import logo from "@/assets/logo.png";
 
 const Index = () => {
   const [search, setSearch] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { vehicles, setVehicles } = useVehicles();
+
+  const baseUrl = window.location.origin;
 
   const filtered = vehicles.filter(
     (v) =>
@@ -28,6 +36,30 @@ const Index = () => {
   const handlePrintQRCodes = () => {
     const placas = filtered.map((v) => v.placa).join(",");
     navigate(`/imprimir-qrcodes?placas=${placas}`);
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const parsed = await parseVehicleExcel(file);
+      setVehicles(parsed);
+      toast({
+        title: "Planilha atualizada!",
+        description: `${parsed.length} veículos carregados com sucesso.`,
+      });
+    } catch (err) {
+      toast({
+        title: "Erro ao ler planilha",
+        description: "Verifique se o arquivo está no formato correto.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -55,9 +87,27 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-3 ml-auto">
             <span className="text-sm text-muted-foreground">{filtered.length} veículos</span>
-            <Button variant="outline" size="sm">
-              <FileUp className="h-4 w-4 mr-2" />
-              Atualizar planilha
+
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            >
+              {uploading ? (
+                <Upload className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <FileUp className="h-4 w-4 mr-2" />
+              )}
+              {uploading ? "Carregando..." : "Atualizar planilha"}
             </Button>
             <Button variant="outline" size="sm" onClick={handlePrintQRCodes}>
               <Printer className="h-4 w-4 mr-2" />
@@ -69,7 +119,12 @@ const Index = () => {
         {/* Vehicle Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((vehicle) => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} onClick={handleCardClick} />
+            <VehicleCard
+              key={vehicle.id}
+              vehicle={vehicle}
+              onClick={handleCardClick}
+              baseUrl={baseUrl}
+            />
           ))}
         </div>
 

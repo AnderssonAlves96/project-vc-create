@@ -5,20 +5,11 @@ import type { Vehicle } from "@/data/vehicles";
 interface VehicleCardProps {
   vehicle: Vehicle;
   onClick: (vehicle: Vehicle) => void;
+  baseUrl: string;
 }
 
-const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
-  // Compact QR data: pipe-separated values
-  const qrData = [
-    vehicle.placa,
-    vehicle.tipo,
-    vehicle.manutencaoPrevista,
-    vehicle.manutencaoRealizada,
-    vehicle.tipoManutencao,
-    vehicle.responsavel,
-    vehicle.proximaManutencao,
-    vehicle.observacoes,
-  ].join("|");
+const VehicleCard = ({ vehicle, onClick, baseUrl }: VehicleCardProps) => {
+  const qrUrl = `${baseUrl}/veiculo/${vehicle.placa}`;
 
   return (
     <div
@@ -43,7 +34,7 @@ const VehicleCard = ({ vehicle, onClick }: VehicleCardProps) => {
         </div>
       </div>
       <div className="flex-shrink-0 ml-4">
-        <QRCodeSVG value={qrData} size={80} level="L" />
+        <QRCodeSVG value={qrUrl} size={80} level="L" />
       </div>
     </div>
   );
