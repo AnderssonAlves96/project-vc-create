@@ -17,6 +17,7 @@ export type Database = {
       veiculos: {
         Row: {
           created_at: string
+          data_revisao: string
           id: string
           manutencao_prevista: string
           manutencao_realizada: string
@@ -30,6 +31,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          data_revisao?: string
           id?: string
           manutencao_prevista?: string
           manutencao_realizada?: string
@@ -43,6 +45,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          data_revisao?: string
           id?: string
           manutencao_prevista?: string
           manutencao_realizada?: string

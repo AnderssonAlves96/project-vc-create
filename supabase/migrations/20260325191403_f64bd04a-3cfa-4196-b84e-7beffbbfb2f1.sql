@@ -1,0 +1,1 @@
+ALTER TABLE public.veiculos ADD COLUMN data_revisao text NOT NULL DEFAULT '';
