@@ -2,6 +2,18 @@ import * as XLSX from "xlsx";
 import type { Vehicle } from "@/data/vehicles";
 import { supabase } from "@/integrations/supabase/client";
 
+function excelSerialToDate(value: string): string {
+  const num = Number(value);
+  if (!value || isNaN(num) || num < 1) return value;
+  // Excel serial number: days since 1900-01-01 (with the 1900 leap year bug)
+  const utcDays = Math.floor(num) - 25569;
+  const date = new Date(utcDays * 86400 * 1000);
+  const dd = String(date.getUTCDate()).padStart(2, "0");
+  const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const yyyy = date.getUTCFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
 export function parseVehicleExcel(file: File): Promise<Vehicle[]> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -10,7 +22,7 @@ export function parseVehicleExcel(file: File): Promise<Vehicle[]> {
         const data = e.target?.result;
         const workbook = XLSX.read(data, { type: "array" });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json<Record<string, string>>(sheet, { defval: "" });
+        const rows = XLSX.utils.sheet_to_json<Record<string, string>>(sheet, { defval: "", raw: true });
 
         const keys0 = Object.keys(rows[0] || {});
         const get = (row: Record<string, string>, keywords: string[]) => {
