@@ -51,6 +51,7 @@ export function parseVehicleExcel(file: File): Promise<Vehicle[]> {
           placa: row.placa,
           manutencaoPrevista: row.manutencao_prevista,
           manutencaoRealizada: row.manutencao_realizada,
+          dataRevisao: row.data_revisao,
           tipoManutencao: row.tipo_manutencao,
           responsavel: row.responsavel,
           proximaManutencao: row.proxima_manutencao,

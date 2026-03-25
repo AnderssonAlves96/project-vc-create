@@ -4,6 +4,7 @@ export interface Vehicle {
   placa: string;
   manutencaoPrevista: string;
   manutencaoRealizada: string;
+  dataRevisao: string;
   tipoManutencao: string;
   responsavel: string;
   proximaManutencao: string;

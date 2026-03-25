@@ -14,6 +14,7 @@ const VehicleDetailModal = ({ vehicle, open, onOpenChange }: VehicleDetailModalP
   const items = [
     { icon: Calendar, label: "MANUTENÇÃO PREVISTA", value: vehicle.manutencaoPrevista },
     { icon: Calendar, label: "MANUTENÇÃO REALIZADA", value: vehicle.manutencaoRealizada },
+    { icon: Calendar, label: "DATA DA REVISÃO", value: vehicle.dataRevisao },
     { icon: Wrench, label: "TIPO DE MANUTENÇÃO", value: vehicle.tipoManutencao },
     { icon: User, label: "RESPONSÁVEL", value: vehicle.responsavel },
     { icon: Calendar, label: "PRÓXIMA MANUTENÇÃO", value: vehicle.proximaManutencao },
