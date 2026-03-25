@@ -38,7 +38,7 @@ export function parseVehicleExcel(file: File): Promise<Vehicle[]> {
             tipo: get(row, ["Tipo"]),
             manutencao_prevista: get(row, ["Manutenção Prevista", "Prevista"]),
             manutencao_realizada: get(row, ["Manutenção Realizada", "Realizada"]),
-            data_revisao: get(row, ["Data da Revisão", "Data de Revisão", "Revisão"]),
+            data_revisao: excelSerialToDate(get(row, ["Data da Revisão", "Data de Revisão", "Revisão"])),
             tipo_manutencao: get(row, ["Tipo de Manutenção", "Tipo Manutenção"]),
             responsavel: get(row, ["Responsável", "Responsavel"]),
             proxima_manutencao: get(row, ["Próxima Manutenção", "Proxima"]),
